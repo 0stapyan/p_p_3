@@ -30,22 +30,70 @@ char* encrypt(char* rawText, int key){
     return encryptedText;
 }
 
-int main(){
+char* decrypt(char* encryptedText, int key){
 
-    char input[1024];
-    int key;
+    int length = strlen(encryptedText);
+    char* decryptedText = (char*)malloc(length + 1);
 
-    printf("Enter a message to encrypt: ");
-    scanf("%[^\n]", input);
-    getchar();
+    if (encryptedText == NULL) {
+        return NULL;
+    }
 
-    printf("Enter an encryption key: ");
-    scanf("%d", &key);
+    for (int i = 0; i < length; i++){
+        char c = encryptedText[i];
+        if (c >= 'A' && c <= 'Z'){
+            decryptedText[i] = (c - 'A' - key + 26) % 26 + 'A';
+        }
+        else if (c >= 'a' && c <= 'z'){
+            decryptedText[i] = (c - 'a' - key + 26) % 26 + 'a';
+        }
+        else if (c >= '0' && c <= '9'){
+            decryptedText[i] = (c - '0' - key + 10) % 10 + '0';
+        }
+        else{
+            decryptedText[i] = c;
+        }
+    }
+    return decryptedText;
+}
 
-    char* encryptedText = encrypt(input, key);
+int main() {
+    while (1) {
+        char userInput[2];
+        char text[1024];
+        int key;
 
-    printf("Encrypted text: %s\n", encryptedText);
+        printf("Do you want to encrypt(0) or decrypt(1) a text? ");
+        scanf("%1s", userInput);
 
-    free(encryptedText);
+        if (userInput[0] == '0') {
+            printf("Enter a message to encrypt: ");
+            scanf(" %[^\n]", text);
+            getchar();
 
-};
+            printf("Enter an encryption key: ");
+            scanf("%d", &key);
+
+            char* encryptedText = encrypt(text, key);
+
+            printf("Encrypted text: %s\n", encryptedText);
+
+            free(encryptedText);
+        }
+
+        else if (userInput[0] == '1') {
+            printf("Enter a message to decrypt: ");
+            scanf(" %[^\n]", text);
+            getchar();
+
+            printf("Enter a decryption key: ");
+            scanf("%d", &key);
+
+            char* decryptedText = decrypt(text, key);
+
+            printf("Decrypted text: %s\n", decryptedText);
+
+            free(decryptedText);
+        }
+    }
+}
